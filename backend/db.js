@@ -2,7 +2,7 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
 
-const dbPath = path.join(__dirname, 'crypto_system.db');
+const dbPath = path.join(process.env.DATA_DIR || __dirname, 'crypto_system.db');
 
 // Ensure db directory exists
 const dbDir = path.dirname(dbPath);
