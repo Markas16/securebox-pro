@@ -1193,9 +1193,9 @@ body {
   box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
 }
 
-/* ── Scoped Dark Mode Styles for Auth Screens (Version 2.1 Revert) ── */
+/* ── Scoped Dark Mode Styles for Auth Screens (Version 2.2 Super Glassy) ── */
 .auth-wrapper .bg-orb {
-  opacity: 0.25;
+  opacity: 0.35; /* Brighter background glows */
 }
 .auth-wrapper .orb-cyan {
   background: radial-gradient(circle, #00f2fe 0%, transparent 70%);
@@ -1205,6 +1205,19 @@ body {
 }
 .auth-wrapper .orb-blue {
   background: radial-gradient(circle, #38bdf8 0%, transparent 70%);
+}
+
+/* Scoped super glassy dark card */
+.auth-wrapper .auth-card {
+  background: rgba(10, 22, 44, 0.32) !important; /* Lighter/more transparent background */
+  backdrop-filter: blur(40px) saturate(220%) !important; /* Enhanced blur & saturation */
+  -webkit-backdrop-filter: blur(40px) saturate(220%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Brighter border outline */
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.55),
+    inset 0 1.5px 1.5px rgba(255, 255, 255, 0.28), /* Shiny edge highlight */
+    inset 0 -1.5px 1.5px rgba(0, 0, 0, 0.3),
+    0 0 45px rgba(0, 242, 254, 0.05) !important;
 }
 
 .auth-wrapper .logo-img {
@@ -1231,45 +1244,52 @@ body {
   filter: drop-shadow(0 0 4px #00f2fe) !important;
 }
 
+/* Highly glassy text inputs */
 .auth-wrapper .form-input {
-  background: rgba(8, 12, 22, 0.6) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.04) !important; /* Glassy translucent white */
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important; /* White border reflection */
   color: #f8fafc !important;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05) !important;
 }
 
 .auth-wrapper .form-input::placeholder {
-  color: rgba(255, 255, 255, 0.35) !important;
+  color: rgba(255, 255, 255, 0.38) !important;
 }
 
 .auth-wrapper .form-input:hover {
-  background: rgba(8, 12, 22, 0.7) !important;
-  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
 }
 
 .auth-wrapper .form-input:focus {
-  background: rgba(8, 12, 22, 0.85) !important;
+  background: rgba(255, 255, 255, 0.09) !important;
   border-color: #00f2fe !important;
   box-shadow: 
     0 0 20px rgba(0, 242, 254, 0.25) !important,
-    inset 0 1px 1px rgba(255, 255, 255, 0.05) !important;
+    inset 0 1.5px 1.5px rgba(255, 255, 255, 0.12) !important;
 }
 
+/* Frosted glassy primary button */
 .auth-wrapper .btn-primary {
-  background: linear-gradient(135deg, #00f2fe 0%, #38bdf8 100%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.78) 0%, rgba(56, 189, 248, 0.78) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.32) !important;
   border-radius: 14px !important;
   font-weight: 700 !important;
   color: #040814 !important;
   letter-spacing: 0.5px !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
   box-shadow: 
-    0 4px 15px rgba(0, 242, 254, 0.15) !important,
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+    0 4px 15px rgba(0, 242, 254, 0.2) !important,
+    inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
 }
 
 .auth-wrapper .btn-primary:hover {
-  box-shadow: 0 6px 25px rgba(0, 242, 254, 0.35) !important;
+  box-shadow: 0 6px 25px rgba(0, 242, 254, 0.4) !important;
   transform: translateY(-2px) !important;
-  border-color: rgba(255, 255, 255, 0.35) !important;
+  border-color: rgba(255, 255, 255, 0.45) !important;
 }
 
 /* Scoped Alert Overrides for Dark Wrapper */
