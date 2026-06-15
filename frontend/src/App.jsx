@@ -9,6 +9,7 @@ import {
   calculateSHA256, encryptFileBuffer, decryptFileBuffer, 
   generateSalt, wrapKeyForVault, unwrapKeyFromVault, base64ToBuffer, bufferToBase64
 } from './crypto';
+import GravityCanvas from './components/GravityCanvas';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000/api';
 
@@ -778,9 +779,13 @@ export default function App() {
   if (currentView === 'anonymous-share') {
     return (
       <div className="auth-wrapper">
+        <div className="bg-orb orb-cyan"></div>
+        <div className="bg-orb orb-purple"></div>
+        <div className="bg-orb orb-blue"></div>
+        <GravityCanvas />
         <div className="glass-panel auth-card" style={{ maxWidth: '600px' }}>
           <div className="auth-header">
-            <Shield className="logo-icon" size={48} />
+            <img src="/logo.jpg" alt="SecureBox Pro" className="logo-img" />
             <h2 className="auth-title">Zero-Knowledge Shared File Portal</h2>
             <p className="auth-subtitle">Download and decrypt files securely using the Web Crypto API.</p>
           </div>
@@ -865,9 +870,13 @@ export default function App() {
   if (!token) {
     return (
       <div className="auth-wrapper">
+        <div className="bg-orb orb-cyan"></div>
+        <div className="bg-orb orb-purple"></div>
+        <div className="bg-orb orb-blue"></div>
+        <GravityCanvas />
         <div className="glass-panel auth-card">
           <div className="auth-header">
-            <Shield className="logo-icon" size={48} />
+            <img src="/logo.jpg" alt="SecureBox Pro" className="logo-img" />
             <h2 className="logo-text" style={{ fontSize: '2rem', marginTop: '10px' }}>SecureBox Pro</h2>
             <p className="auth-subtitle">Academic Cryptographic Demonstration System</p>
           </div>
@@ -974,7 +983,7 @@ export default function App() {
       {/* Slim Top Bar */}
       <header className="top-bar">
         <div className="logo-container-horizontal">
-          <Shield className="logo-icon" size={30} />
+          <img src="/logo.jpg" alt="SecureBox Pro" className="logo-img-small" />
           <h1 className="logo-text">SecureBox Pro</h1>
         </div>
         <div className="user-profile-horizontal">
@@ -1265,7 +1274,7 @@ export default function App() {
                   </button>
                   
                   <button className="btn btn-primary btn-block" style={{ gridColumn: 'span 2' }} onClick={uploadEncryptedToServer}>
-                    <CloudUploadIcon /> Upload Encrypted Blob &amp; Store Keys in Vault
+                    <Upload size={18} /> Upload Encrypted Blob &amp; Store Keys in Vault
                   </button>
                 </div>
               )}
