@@ -585,19 +585,19 @@ body {
 .alert-danger {
   background: rgba(244, 63, 94, 0.1);
   border: 1px solid rgba(244, 63, 94, 0.2);
-  color: #fda4af;
+  color: #9f1239; /* high contrast dark red */
 }
 
 .alert-success {
   background: rgba(16, 185, 129, 0.1);
   border: 1px solid rgba(16, 185, 129, 0.2);
-  color: #a7f3d0;
+  color: #065f46; /* high contrast dark green */
 }
 
 .alert-warning {
   background: rgba(245, 158, 11, 0.1);
   border: 1px solid rgba(245, 158, 11, 0.2);
-  color: #fde047;
+  color: #92400e; /* high contrast dark yellow */
 }
 
 /* Stats Cards Grid */
@@ -1270,4 +1270,15 @@ body {
   box-shadow: 0 6px 25px rgba(0, 242, 254, 0.35) !important;
   transform: translateY(-2px) !important;
   border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+/* Scoped Alert Overrides for Dark Wrapper */
+.auth-wrapper .alert-danger {
+  color: #fda4af !important;
+}
+.auth-wrapper .alert-success {
+  color: #a7f3d0 !important;
+}
+.auth-wrapper .alert-warning {
+  color: #fde047 !important;
 }
