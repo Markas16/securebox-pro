@@ -29,9 +29,9 @@ export default function GravityCanvas() {
 
     // Clean rgb colors for dynamic alpha injection
     const themeColors = [
-      [176, 125, 78],  // Caramel
-      [138, 90, 54],   // Coffee
-      [190, 150, 110], // Warm Cream
+      [0, 242, 254],   // Cyan
+      [56, 189, 248],  // Light Blue
+      [192, 132, 252], // Purple
     ];
 
     // Resize handler
@@ -118,8 +118,8 @@ export default function GravityCanvas() {
 
       // 1. Soft outer ambient atmospheric glow
       const glowGrad = ctx.createRadialGradient(x, y, r * 0.7, x, y, r * 2.2);
-      glowGrad.addColorStop(0, 'rgba(176, 125, 78, 0.18)');
-      glowGrad.addColorStop(0.4, 'rgba(212, 163, 115, 0.08)');
+      glowGrad.addColorStop(0, 'rgba(0, 242, 254, 0.15)');
+      glowGrad.addColorStop(0.4, 'rgba(192, 132, 252, 0.06)');
       glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.beginPath();
       ctx.arc(x, y, r * 2.2, 0, Math.PI * 2);
@@ -143,9 +143,9 @@ export default function GravityCanvas() {
 
       // 3. Glowing Glassy Crescent Rim (Left/Top side reflective bezel)
       const rimGrad = ctx.createLinearGradient(x - r, y - r, x + r, y + r);
-      rimGrad.addColorStop(0, 'rgba(255, 255, 255, 0.75)');
-      rimGrad.addColorStop(0.3, 'rgba(176, 125, 78, 0.55)');
-      rimGrad.addColorStop(0.7, 'rgba(212, 163, 115, 0.35)');
+      rimGrad.addColorStop(0, 'rgba(255, 255, 255, 0.65)');
+      rimGrad.addColorStop(0.3, 'rgba(0, 242, 254, 0.45)');
+      rimGrad.addColorStop(0.7, 'rgba(192, 132, 252, 0.25)');
       rimGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
       ctx.beginPath();

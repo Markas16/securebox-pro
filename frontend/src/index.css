@@ -266,8 +266,8 @@ body {
   min-height: 100vh;
   padding: 24px;
   background: 
-    linear-gradient(135deg, rgba(247, 244, 239, 0.35) 0%, rgba(220, 212, 199, 0.5) 100%),
-    url('/bg_cream.png') no-repeat center center / cover;
+    linear-gradient(135deg, rgba(8, 12, 22, 0.75) 0%, rgba(15, 23, 42, 0.85) 100%),
+    url('/bg.jpg') no-repeat center center / cover;
   background-attachment: fixed;
   position: relative;
   overflow: hidden;
@@ -277,7 +277,7 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(0, 242, 254, 0.05) 0%, transparent 70%);
+  background: radial-gradient(circle at 50% 50%, rgba(0, 242, 254, 0.08) 0%, transparent 70%);
   pointer-events: none;
   z-index: 1;
 }
@@ -340,16 +340,16 @@ body {
   width: 100%;
   max-width: 460px;
   padding: 40px;
-  background: rgba(255, 255, 255, 0.48);
-  backdrop-filter: blur(35px) saturate(180%);
-  -webkit-backdrop-filter: blur(35px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.65);
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
   box-shadow: 
-    0 20px 45px rgba(74, 44, 17, 0.08),
-    inset 0 1px 2px rgba(255, 255, 255, 0.6),
-    inset 0 -1px 1px rgba(74, 44, 17, 0.05),
-    0 0 30px rgba(176, 125, 78, 0.05);
+    0 20px 50px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.25),
+    0 0 40px rgba(0, 242, 254, 0.05);
   position: relative;
   z-index: 2;
   animation: authCardEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -371,7 +371,7 @@ body {
   font-weight: 800;
   margin-top: 14px;
   margin-bottom: 6px;
-  background: linear-gradient(120deg, var(--accent-purple) 0%, var(--accent-cyan) 50%, var(--accent-purple) 100%);
+  background: linear-gradient(120deg, #ffffff 0%, #00f2fe 50%, #ffffff 100%);
   background-size: 200% auto;
   animation: logoGradientShift 5s ease infinite;
   -webkit-background-clip: text;
@@ -1191,4 +1191,83 @@ body {
 .logo-img-small:hover {
   transform: scale(1.08);
   box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+}
+
+/* ── Scoped Dark Mode Styles for Auth Screens (Version 2.1 Revert) ── */
+.auth-wrapper .bg-orb {
+  opacity: 0.25;
+}
+.auth-wrapper .orb-cyan {
+  background: radial-gradient(circle, #00f2fe 0%, transparent 70%);
+}
+.auth-wrapper .orb-purple {
+  background: radial-gradient(circle, #c084fc 0%, transparent 70%);
+}
+.auth-wrapper .orb-blue {
+  background: radial-gradient(circle, #38bdf8 0%, transparent 70%);
+}
+
+.auth-wrapper .logo-img {
+  border: 2px solid #00f2fe;
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.45);
+}
+
+.auth-wrapper .form-label, 
+.auth-wrapper .auth-subtitle, 
+.auth-wrapper .auth-footer {
+  color: #94a3b8 !important;
+}
+
+.auth-wrapper .auth-link {
+  color: #00f2fe !important;
+}
+
+.auth-wrapper .input-icon {
+  color: #64748b !important;
+}
+
+.auth-wrapper .input-wrapper:focus-within .input-icon {
+  color: #00f2fe !important;
+  filter: drop-shadow(0 0 4px #00f2fe) !important;
+}
+
+.auth-wrapper .form-input {
+  background: rgba(8, 12, 22, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+}
+
+.auth-wrapper .form-input::placeholder {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.auth-wrapper .form-input:hover {
+  background: rgba(8, 12, 22, 0.7) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+.auth-wrapper .form-input:focus {
+  background: rgba(8, 12, 22, 0.85) !important;
+  border-color: #00f2fe !important;
+  box-shadow: 
+    0 0 20px rgba(0, 242, 254, 0.25) !important,
+    inset 0 1px 1px rgba(255, 255, 255, 0.05) !important;
+}
+
+.auth-wrapper .btn-primary {
+  background: linear-gradient(135deg, #00f2fe 0%, #38bdf8 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 14px !important;
+  font-weight: 700 !important;
+  color: #040814 !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 
+    0 4px 15px rgba(0, 242, 254, 0.15) !important,
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+.auth-wrapper .btn-primary:hover {
+  box-shadow: 0 6px 25px rgba(0, 242, 254, 0.35) !important;
+  transform: translateY(-2px) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
 }
