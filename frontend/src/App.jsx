@@ -20,6 +20,7 @@ export default function App() {
   const [salt, setSalt] = useState(localStorage.getItem('salt') || '');
   const [passwordInput, setPasswordInput] = useState(''); // Used during login/signup
   const [sessionPassword, setSessionPassword] = useState(''); // In-memory only for key wraps
+  const [showLoginAnimation, setShowLoginAnimation] = useState(false);
 
   // Navigation: 'dashboard' | 'encrypt' | 'decrypt' | 'vault' | 'logs'
   const [currentView, setCurrentView] = useState('dashboard');
@@ -249,8 +250,7 @@ export default function App() {
         setSalt(data.salt);
         setSessionPassword(passwordInput); // Store password in memory for wrapping keys
 
-        triggerAlert(null, 'Welcome back, ' + data.username + '!');
-        setCurrentView('dashboard');
+        setShowLoginAnimation(true);
       } else {
         triggerAlert(data.error);
       }
@@ -866,6 +866,14 @@ export default function App() {
     );
   }
 
+  const handleTransitionComplete = () => {
+    setShowLoginAnimation(false);
+    setCurrentView('dashboard');
+    triggerAlert(null, 'Welcome back, ' + username + '!');
+  };
+
+
+
   // Render Authentication Forms if not signed in
   if (!token) {
     return (
@@ -979,6 +987,9 @@ export default function App() {
   // Render Full Dashboard Layout
   return (
     <div className="app-container vertical-layout">
+      {showLoginAnimation && (
+        <LoginTransitionScreen username={username} onComplete={handleTransitionComplete} />
+      )}
 
       {/* Slim Top Bar */}
       <header className="top-bar">
@@ -1567,6 +1578,73 @@ export default function App() {
 }
 
 // Inline helper components
+// 3-second transition/animation screen component after successful login
+function LoginTransitionScreen({ username, onComplete }) {
+  const [phase, setPhase] = useState(0);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    // Start progress fill animation shortly after mount
+    const progressTimer = setTimeout(() => {
+      setProgress(100);
+    }, 50);
+
+    // Sequence messages over the 3 seconds
+    const phase1 = setTimeout(() => setPhase(1), 1000);
+    const phase2 = setTimeout(() => setPhase(2), 2000);
+
+    // Trigger completion callback
+    const completeTimer = setTimeout(() => {
+      onComplete();
+    }, 3100);
+
+    return () => {
+      clearTimeout(progressTimer);
+      clearTimeout(phase1);
+      clearTimeout(phase2);
+      clearTimeout(completeTimer);
+    };
+  }, [onComplete]);
+
+  const messages = [
+    "Verifying cryptographic identity...",
+    "Unwrapping PBKDF2 Master Key Vault...",
+    "Establishing secure session context..."
+  ];
+
+  return (
+    <div className="auth-wrapper login-transition-overlay">
+      <div className="bg-orb orb-cyan"></div>
+      <div className="bg-orb orb-purple"></div>
+      <div className="bg-orb orb-blue"></div>
+      <GravityCanvas />
+      
+      <div className="glass-panel auth-card transition-card text-center">
+        <div className="transition-logo-container">
+          <div className="transition-shield-outer">
+            <div className="transition-shield-inner">
+              <Shield size={42} className="transition-shield-icon" />
+            </div>
+            <div className="transition-radar-pulse"></div>
+          </div>
+        </div>
+
+        <h3 className="transition-title">Secure Authorization</h3>
+        <p className="transition-welcome">Welcome back, <strong>{username}</strong></p>
+
+        <div className="transition-progress-container">
+          <div className="transition-progress-bar" style={{ width: `${progress}%` }}></div>
+        </div>
+
+        <div className="transition-status-text">
+          <RefreshCw className="transition-spinner animate-spin" size={14} />
+          <span>{messages[phase]}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function CloudUploadIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-cloud-upload">

@@ -8,16 +8,18 @@ export default function GravityCanvas() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    // Fast 2d rendering context
+    const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
     let animationFrameId;
     let particles = [];
     let leaves = [];
+    let lastTime = performance.now();
     
-    // Config parameters
-    const PARTICLE_COUNT = 450;      
-    const LEAF_COUNT = 22;           
+    // Optimized particle/leaf configs for smooth performance
+    const PARTICLE_COUNT = 380;      
+    const LEAF_COUNT = 18;           
     const REPEL_RADIUS = 145;        
     const LEAF_REPEL_RADIUS = 175;   
     const REPEL_POWER = 8.0;         
@@ -25,16 +27,13 @@ export default function GravityCanvas() {
     const RESTORE_FORCE = 0.035;     
     const DAMPING = 0.88;            
     const LEAF_DAMPING = 0.94;       
-    const TRAIL_LENGTH = 4;          
 
-    // Clean rgb colors for dynamic alpha injection
     const themeColors = [
       [0, 242, 254],   // Cyan
       [56, 189, 248],  // Light Blue
       [192, 132, 252], // Purple
     ];
 
-    // Resize handler
     const handleResize = () => {
       const parent = canvas.parentElement;
       if (parent) {
@@ -47,7 +46,6 @@ export default function GravityCanvas() {
       initAssets();
     };
 
-    // Initialize particles and falling leaves
     const initAssets = () => {
       particles = [];
       for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -67,8 +65,7 @@ export default function GravityCanvas() {
           radius,
           color,
           alpha,
-          seed: Math.random() * 100,
-          history: [],
+          seed: Math.random() * 100
         });
       }
 
@@ -80,7 +77,7 @@ export default function GravityCanvas() {
         const height = width * (Math.random() * 0.4 + 1.4); 
         
         const rgb = themeColors[i % themeColors.length];
-        const color = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.38)`;
+        const color = "rgba(" + rgb[0] + ", " + rgb[1] + ", " + rgb[2] + ", 0.38)";
         
         leaves.push({
           x,
@@ -99,7 +96,6 @@ export default function GravityCanvas() {
       }
     };
 
-    // Track mouse position on the screen
     const handleMouseMove = (e) => {
       const rect = canvas.getBoundingClientRect();
       const mouse = mouseRef.current;
@@ -112,11 +108,10 @@ export default function GravityCanvas() {
       mouseRef.current.active = false;
     };
 
-    // Helper to draw the premium glassy moon
     const drawGlassyMoon = (ctx, x, y, r) => {
       ctx.save();
 
-      // 1. Soft outer ambient atmospheric glow
+      // Outer glow
       const glowGrad = ctx.createRadialGradient(x, y, r * 0.7, x, y, r * 2.2);
       glowGrad.addColorStop(0, 'rgba(0, 242, 254, 0.15)');
       glowGrad.addColorStop(0.4, 'rgba(192, 132, 252, 0.06)');
@@ -126,7 +121,7 @@ export default function GravityCanvas() {
       ctx.fillStyle = glowGrad;
       ctx.fill();
 
-      // 2. Glass Base Circle (Semi-translucent frosted surface)
+      // Glass base
       const baseGrad = ctx.createLinearGradient(x - r, y - r, x + r, y + r);
       baseGrad.addColorStop(0, 'rgba(255, 255, 255, 0.12)');
       baseGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.03)');
@@ -136,12 +131,11 @@ export default function GravityCanvas() {
       ctx.fillStyle = baseGrad;
       ctx.fill();
 
-      // Fine frosted boundary stroke
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
       ctx.lineWidth = 1.0;
       ctx.stroke();
 
-      // 3. Glowing Glassy Crescent Rim (Left/Top side reflective bezel)
+      // Rim reflection
       const rimGrad = ctx.createLinearGradient(x - r, y - r, x + r, y + r);
       rimGrad.addColorStop(0, 'rgba(255, 255, 255, 0.65)');
       rimGrad.addColorStop(0.3, 'rgba(0, 242, 254, 0.45)');
@@ -154,7 +148,7 @@ export default function GravityCanvas() {
       ctx.lineWidth = 2.0;
       ctx.stroke();
 
-      // 4. Glassy Specular Reflection (Top-left curved specular lens highlight)
+      // Specular highlight
       const specularGrad = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, 0, x - r * 0.35, y - r * 0.35, r * 0.7);
       specularGrad.addColorStop(0, 'rgba(255, 255, 255, 0.18)');
       specularGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
@@ -164,7 +158,7 @@ export default function GravityCanvas() {
       ctx.fillStyle = specularGrad;
       ctx.fill();
 
-      // 5. Crescent shape shadow cutout (Creates the 3D spherical lens volume)
+      // Inner shadow cutout
       ctx.beginPath();
       ctx.arc(x + r * 0.18, y + r * 0.18, r * 0.94, 0, Math.PI * 2);
       ctx.strokeStyle = 'rgba(4, 8, 16, 0.32)';
@@ -174,30 +168,40 @@ export default function GravityCanvas() {
       ctx.restore();
     };
 
-    // Setup events
     window.addEventListener('resize', handleResize);
     window.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseleave', handleMouseLeave);
     
     handleResize();
 
-    // Main animation loop
-    const animate = () => {
+    const animate = (now) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const time = Date.now() * 0.001;
+      const time = now * 0.001;
       const mouse = mouseRef.current;
 
-      // Draw Glassy Moon first so particles and leaves float in front of it
+      // Frame rate delta normalization targeting 60fps baseline
+      let dt = (now - lastTime) / 16.666;
+      if (dt > 4) dt = 4; // Cap frame time jumps during tab swaps
+      lastTime = now;
+
       const moonX = canvas.width - 160;
       const moonY = 140;
       const moonRadius = 65;
       drawGlassyMoon(ctx, moonX, moonY, moonRadius);
 
-      // 1. Update & Draw Particles
+      // Create coordinate batch lists to reduce drawing overhead (6 path calls vs 1800+)
+      const particlePaths = [
+        { lines: [], dots: [] },
+        { lines: [], dots: [] },
+        { lines: [], dots: [] }
+      ];
+
+      // 1. Update Particles
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
-        const swayX = Math.sin(time + p.seed * 5) * 0.15;
-        const swayY = Math.cos(time + p.seed * 3) * 0.15;
+        const colorIndex = i % themeColors.length;
+        const swayX = Math.sin(time + p.seed * 5) * 0.15 * dt;
+        const swayY = Math.cos(time + p.seed * 3) * 0.15 * dt;
 
         // Particle repulsion
         if (mouse.active && mouse.x !== null && mouse.y !== null) {
@@ -207,51 +211,60 @@ export default function GravityCanvas() {
 
           if (dist < REPEL_RADIUS && dist > 1) {
             const force = (REPEL_RADIUS - dist) / REPEL_RADIUS;
-            p.vx += (dx / dist) * force * REPEL_POWER;
-            p.vy += (dy / dist) * force * REPEL_POWER;
+            p.vx += (dx / dist) * force * REPEL_POWER * dt;
+            p.vy += (dy / dist) * force * REPEL_POWER * dt;
           }
         }
 
-        // Particle restoring spring
-        p.vx += (p.homeX - p.x) * RESTORE_FORCE;
-        p.vy += (p.homeY - p.y) * RESTORE_FORCE;
-        p.vx *= DAMPING;
-        p.vy *= DAMPING;
+        // Particle spring physics
+        p.vx += (p.homeX - p.x) * RESTORE_FORCE * dt;
+        p.vy += (p.homeY - p.y) * RESTORE_FORCE * dt;
+        p.vx *= Math.pow(DAMPING, dt);
+        p.vy *= Math.pow(DAMPING, dt);
         
-        p.x += p.vx + swayX;
-        p.y += p.vy + swayY;
+        p.x += p.vx * dt + swayX;
+        p.y += p.vy * dt + swayY;
 
-        // History trail collection
-        p.history.push({ x: p.x, y: p.y });
-        if (p.history.length > TRAIL_LENGTH) {
-          p.history.shift();
+        // Queue coordinates for batch path drawing
+        particlePaths[colorIndex].lines.push({ x1: p.x, y1: p.y, x2: p.x - p.vx * 1.5, y2: p.y - p.vy * 1.5 });
+        particlePaths[colorIndex].dots.push({ x: p.x, y: p.y, r: p.radius });
+      }
+
+      // Draw batch motion-blur trails (lines)
+      for (let c = 0; c < 3; c++) {
+        ctx.beginPath();
+        const color = themeColors[c];
+        ctx.strokeStyle = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", 0.22)";
+        ctx.lineWidth = 1.6;
+        
+        const paths = particlePaths[c].lines;
+        for (let j = 0; j < paths.length; j++) {
+          const ln = paths[j];
+          ctx.moveTo(ln.x1, ln.y1);
+          ctx.lineTo(ln.x2, ln.y2);
         }
+        ctx.stroke();
+      }
 
-        // Draw particle trails
-        for (let h = 0; h < p.history.length; h++) {
-          const pos = p.history[h];
-          const ratio = (h + 1) / p.history.length;
-          const currentAlpha = p.alpha * ratio * 0.55;
-          const currentRadius = p.radius * (0.5 + ratio * 0.5);
-
-          ctx.beginPath();
-          ctx.arc(pos.x, pos.y, currentRadius, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, ${currentAlpha})`;
-          ctx.fill();
-
-          if (h === p.history.length - 1) {
-            ctx.beginPath();
-            ctx.arc(pos.x, pos.y, currentRadius * 2.2, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, ${currentAlpha * 0.25})`;
-            ctx.fill();
-          }
+      // Draw batch particle heads (dots)
+      for (let c = 0; c < 3; c++) {
+        ctx.beginPath();
+        const color = themeColors[c];
+        ctx.fillStyle = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", 0.42)";
+        
+        const dots = particlePaths[c].dots;
+        for (let j = 0; j < dots.length; j++) {
+          const dtObj = dots[j];
+          ctx.moveTo(dtObj.x + dtObj.r, dtObj.y);
+          ctx.arc(dtObj.x, dtObj.y, dtObj.r, 0, Math.PI * 2);
         }
+        ctx.fill();
       }
 
       // 2. Update & Draw Falling Leaves
       for (let i = 0; i < leaves.length; i++) {
         const leaf = leaves[i];
-        const sway = Math.sin(time * leaf.swaySpeed + leaf.seed) * 0.35;
+        const sway = Math.sin(time * leaf.swaySpeed + leaf.seed) * 0.35 * dt;
 
         // Leaf wind repulsion
         if (mouse.active && mouse.x !== null && mouse.y !== null) {
@@ -261,21 +274,20 @@ export default function GravityCanvas() {
 
           if (dist < LEAF_REPEL_RADIUS && dist > 1) {
             const force = (LEAF_REPEL_RADIUS - dist) / LEAF_REPEL_RADIUS;
-            leaf.vx += (dx / dist) * force * LEAF_REPEL_POWER;
-            leaf.vy += (dy / dist) * force * LEAF_REPEL_POWER;
-            leaf.angle += (dx > 0 ? 0.08 : -0.08) * force;
+            leaf.vx += (dx / dist) * force * LEAF_REPEL_POWER * dt;
+            leaf.vy += (dy / dist) * force * LEAF_REPEL_POWER * dt;
+            leaf.angle += (dx > 0 ? 0.08 : -0.08) * force * dt;
           }
         }
 
         // Apply leaf velocities
-        leaf.vx *= LEAF_DAMPING;
-        leaf.vy *= LEAF_DAMPING;
+        leaf.vx *= Math.pow(LEAF_DAMPING, dt);
+        leaf.vy *= Math.pow(LEAF_DAMPING, dt);
 
-        leaf.x += leaf.vx + sway;
-        leaf.y += leaf.vy + leaf.speedY;
-        leaf.angle += leaf.spinSpeed;
+        leaf.x += leaf.vx * dt + sway;
+        leaf.y += leaf.vy * dt + leaf.speedY * dt;
+        leaf.angle += leaf.spinSpeed * dt;
 
-        // Wrap boundaries
         if (leaf.y > canvas.height + 20) {
           leaf.y = -20;
           leaf.x = Math.random() * canvas.width;
@@ -288,7 +300,6 @@ export default function GravityCanvas() {
           leaf.x = -20;
         }
 
-        // Draw Leaf Shape with rotation
         ctx.save();
         ctx.translate(leaf.x, leaf.y);
         ctx.rotate(leaf.angle);
@@ -300,7 +311,6 @@ export default function GravityCanvas() {
         ctx.fillStyle = leaf.color;
         ctx.fill();
 
-        // Leaf spine vein line
         ctx.beginPath();
         ctx.moveTo(0, -leaf.height / 2);
         ctx.lineTo(0, leaf.height / 2);
@@ -314,9 +324,8 @@ export default function GravityCanvas() {
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    animate();
+    animationFrameId = requestAnimationFrame(animate);
 
-    // Cleanup listeners
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
